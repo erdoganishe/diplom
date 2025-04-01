@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>My Page</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="lib/cryptojs.min.js"></script>
+    <script src="lib/ethers.min.js"></script>
+    <script src="lib/qrcode.min.js"></script>
+    <script src="config.js"></script>
+  </head>
+  <body>
+    <label id = "current-balance-label">123</label>
+    <button id = "copy-address-button">123</button>
+    <div id = "header">
+        <button class="header-button" id = "header-send-button">Send</button>
+        <button class="header-button" id = "header-receive-button">Receive</button>
+        <button class="header-button" id = "header-contract-button">Deploy Smart Contract</button>
+        <button class="header-button" id = "header-swap-button">Swap</button>
+    </div>
+    <div class="inner-popup hidden" id = "send-popup">
+        <button class = "close-button" id = "send-close-button">X</button>
+        <input class="string-input" id = "send-address-input" type = "text" placeholder="Recepient address"></input>
+        <input class="value-input" id = "send-amount-input" type = "number" placeholder="Amount"></input>
+        <button id = "send-tx-button">Send</button>
+    </div>
+
+    <div class="inner-popup hidden" id = "receive-popup">
+        <button class = "close-button" id = "receive-close-button">X</button>
+        <div id="qrCodeContainer" style="margin-top: 20px;"></div>
+    </div>
+
+    <div class="inner-popup hidden" id = "contract-popup">
+        <button class = "close-button" id = "contract-close-button">X</button>
+        <input class="contract-input" id = "contract-abi-input" type = "text" placeholder="abi"></input>
+        <input class="contract-input" id = "contract-bytecode-input" type = "text" placeholder="bytecode"></input>
+        <button id = "contract-delploy">Deploy contract</button>
+    </div>
+
+    <div id = "main-content"> 
+        <div id = "local-history-container" class = "main-content-div hidden">
+
+        </div>
+        <div id = "history-container" class = "main-content-div hidden">
+            <div id = "graph-container">
+                hui
+            </div>
+            <div id = "graph-buttons-container">
+                <button id = "graph-button1" class="graph-button active-graph-button"> 1 Day</button>
+                <button id = "graph-button7" class="graph-button"> 1 Week</button>
+                <button id = "graph-button30" class="graph-button"> 1 Month</button>
+                <button id = "graph-button365" class="graph-button"> 1 Year</button>
+            </div>
+        </div>
+    </div>
+    <div id = "footer">
+        <button class="footer-button active" id = "footer-home-button">Ho</button>
+        <button class="footer-button" id = "footer-history-button">Hi</button>
+        <button class="footer-button" id = "footer-voting-button">Vo</button>
+        <button class="footer-button" id = "footer-settings-button">Se</button>
+    </div>
+
+    <!-- <script src="keys.js" defer></script>
+     -->
+    <script src="fetchRecentBalances.js" defer></script>
+    <script src="smartContractDeploy.js" defer></script>
+    <script src="sendTransaction.js" defer></script>
+    <script src="home.js" deref></script>
+  </body>
+</html>

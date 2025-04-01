@@ -1,0 +1,8 @@
+config.js
+*.tmp.*
+*.tmp
+tmp.*
+*.dev
+*.dev.*
+dev.*
+.DS_STORE

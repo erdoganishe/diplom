@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>My Page</title>
+    <script src="lib/cryptojs.min.js"></script>
+    <script src="lib/ethers.min.js"></script>
+    <script src="lib/qrcode.min.js"></script>
+    <script src="config.js"></script>
+  </head>
+  <body>
+    <button id = "send-tx">SEND</button>
+    <button id = "generate-qr">GENERATE</button>
+    <button id = "compile-sol">Compile</button>
+    <div id="qrCodeContainer" style="margin-top: 20px;"></div>
+    <script src="keys.js" defer></script>
+    <script src="tx.js" defer></script>
+    <script src="history.js" defer></script>
+    <script src="get.js" defer></script>
+    <script src="smartContractDeploy.js" defer></script>
+  </body>
+</html>

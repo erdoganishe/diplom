@@ -1,0 +1,23 @@
+{
+    "manifest_version": 2,
+    "name": "CircuitWallet",
+    "version": "1.0",
+  
+    "description": "Crypto wallet for Etherium blockchain",
+  
+    "icons": {
+      "48": "assets/48.png"
+    },
+
+    "browser_action": {
+      "default_popup": "popup/popup.html"
+    },
+  
+    "content_scripts": [
+      {
+        "matches": ["*://*.mozilla.org/*"],
+        "js": ["wallet.js"]
+      }
+    ]
+  }
+  
