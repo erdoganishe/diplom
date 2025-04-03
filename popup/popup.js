@@ -9,6 +9,7 @@
 
 
 document.getElementById("hui").addEventListener("click", () => {
-  console.log("redirect");
+
+  console.log(browser);
   window.location.href='../utils/register.html';
 });

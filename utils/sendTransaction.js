@@ -1,4 +1,4 @@
-async function sendTransaction(toAddress, amount) {
+async function sendTransaction(toAddress, amount, signer) {
     const tx = {
         to: toAddress,
         value: ethers.utils.parseEther(amount), 
@@ -9,9 +9,9 @@ async function sendTransaction(toAddress, amount) {
         const transaction = await signer.sendTransaction(tx);
         const receipt = await transaction.wait();
         const block = await provider.getBlock(receipt.blockNumber);
-        return {to: toAddress, value: amount, timestamp: new Date(block.timestamp * 1000).toISOString().replace('T', ' ').replace('Z', ''), txHash: receipt.transactionHash}
+        return {type: "send",to: toAddress, value: amount, timestamp: new Date(block.timestamp * 1000).toISOString().replace('T', ' ').replace('Z', ''), txHash: receipt.transactionHash}
     } catch (error) {
         // TODO: Catch errors
-        alert('Transaction failed:', error);
+        console.log('Transaction failed:', error);
     }
 }

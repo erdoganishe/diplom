@@ -68,17 +68,22 @@ thirdPrevButton.addEventListener("click", ()=>{
 });
 
 const confirmButton = document.getElementById("confirm-button");
-confirmButton.addEventListener("click", ()=>{
+confirmButton.addEventListener("click", async ()=>{
     const userPhrase = [];
     for (var i = 12; i < 24; i++){
         userPhrase.push(phraseInputs[i].value);
     }
     if (userPhrase.join(" ") == params.mnemonic){
         const passwordHash = CryptoJS.SHA256(password);
-        console.log(passwordHash.toString());
-        // save to cache password hash and params
-        // redirect
-        console.log(1);
+        
+        await putValueToLocalStorage("passwordHash", passwordHash, password);
+        await putValueToLocalStorage("mnemonic", params.mnemonic, password);
+        await putValueToLocalStorage("privateKey", params.privateKey, password);
+        await putValueToLocalStorage("publicKey", params.publicKey, password);
+        await putValueToLocalStorage("address", params.address, password);
+        await savePassword(password);
+
+        window.location.href = "home.html";
     } else {
         alert("Wrong phrase!");
     }
@@ -108,3 +113,4 @@ function processKeys(first){
         phraseInputs[i].type = "password";
     }
 }
+

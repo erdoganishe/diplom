@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extension Page</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="lib/cryptojs.min.js"></script>
+    <script src="lib/ethers.min.js"></script>
+    <script src="lib/qrcode.min.js"></script>
+</head>
+<body>
+    <div id="app-confirm-phrase">
+        <label>Put your mnemonic phrase: soap foam account antenna machine spirit shadow inspire robust buzz behind basic</label>
+        <div class="grid-container">
+            <input class="phrase-container row1 column1" type="text"></input>
+            <input class="phrase-container row1 column2" type="text"></input>
+            <input class="phrase-container row1 column3" type="text"></input>
+            <input class="phrase-container row1 column4" type="text"></input>
+            
+            <input class="phrase-container row2 column1" type="text"></input>
+            <input class="phrase-container row2 column2" type="text"></input>
+            <input class="phrase-container row2 column3" type="text"></input>
+            <input class="phrase-container row2 column4" type="text"></input>
+            
+            <input class="phrase-container row3 column1" type="text"></input>
+            <input class="phrase-container row3 column2" type="text"></input>
+            <input class="phrase-container row3 column3" type="text"></input>
+            <input class="phrase-container row3 column4" type="text"></input>
+        </div>
+        <label>New password</label>
+        <input class = "password-input" id = "password" type = "password" placeholder="Password"></input>
+        <label>Confirm new password</label>
+        <input class = "password-input" id = "confirm-password" type = "password" placeholder="Confirm password"></input>
+        <button id = "confirm-new-password-button">Proceed</button>
+        <button id = "to-login-button">To login</button>
+        <button id = "to-register-button">To register</button>
+
+    </div>
+
+    <script src = "cypher.js"></script>
+    <script src = "keys.js"></script>
+    <script src = "recover.js"></script>
+</body>
+</html>

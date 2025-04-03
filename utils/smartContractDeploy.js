@@ -1,5 +1,3 @@
-const { error } = require("console");
-
 async function deploySmartContract(bytecode, abi){
     const factory = new ethers.ContractFactory(abi, bytecode, signer);
     try {
@@ -12,7 +10,7 @@ async function deploySmartContract(bytecode, abi){
         } catch(e) {
           //TODO: catch errors
           console.log(e);
-          return {txHash: contract.deployTransaction.hash, status: false};
+          return {type: "contract", txHash: contract.deployTransaction.hash, status: false};
         }
     } catch (error) {
         console.error('Error deploying contract:', error.message);

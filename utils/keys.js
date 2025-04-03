@@ -21,7 +21,13 @@ function getCheckPhrase(count, max, phrase) {
     return {phrase: phrase, indexes: numbers};
 }
 
-// const res = generateAll();
-// console.log(res)
-// console.log(getCheckPhrase(4, 11, res.mnemonic.split(" ")));
+function generateAllfromMnemonic(mnemonic){
+    const wallet = ethers.Wallet.fromMnemonic(mnemonic);
 
+    const priv = wallet.privateKey;
+    const pub = wallet.publicKey;
+    const addr = wallet.address;
+
+
+    return {mnemonic:mnemonic, privateKey:priv, publicKey:pub, address:addr}
+}
