@@ -14,7 +14,7 @@ let signer;
 document.addEventListener("DOMContentLoaded", async () => {
   await getPassword()
     .then(async (password) => {
-      if (password == ""){
+      if (password == "") {
         window.location.href = "login.html";
       }
       await getValueFromLocalStorage("mnemonic", password).then(
@@ -35,38 +35,37 @@ document.addEventListener("DOMContentLoaded", async () => {
     .then(() => {
       signer = new ethers.Wallet(privateKey, provider);
 
-        //------------------------------------------------------------
-        // Receive
-        const qrCodeContainer = document.getElementById("qrCodeContainer");
-        new QRCode(qrCodeContainer, {
+      //------------------------------------------------------------
+      // Receive
+      const qrCodeContainer = document.getElementById("qrCodeContainer");
+      new QRCode(qrCodeContainer, {
         text: address,
         width: 180,
         height: 180,
         colorDark: "#000000",
         colorLight: "#ffffff",
         correctLevel: QRCode.CorrectLevel.H,
-        });
+      });
     });
-    let curBal = 0;
-    
-    await updateBalance();
+  let curBal = 0;
 
+  await updateBalance();
+
+  copyAddressButton.innerHTML = address.slice(0,6) + "..." + address.slice(-4);
 });
-
-
 
 //------------------------------------------------------------
 // Balance and address
 
 // TODO: remove alert and replace with notification popup!
 const balanceLabel = document.getElementById("current-balance-label");
-async function updateBalance(){
-    await provider.getBlockNumber()
-    .then(async (currentBlock) => {
-        await getBalanceAtBlock(address, currentBlock).then((currentBalance) => {
-            balanceLabel.innerHTML = parseFloat(currentBalance).toFixed(4) + " SepoliaETH";
-        });
+async function updateBalance() {
+  await provider.getBlockNumber().then(async (currentBlock) => {
+    await getBalanceAtBlock(address, currentBlock).then((currentBalance) => {
+      balanceLabel.innerHTML =
+        parseFloat(currentBalance).toFixed(4) + " SepoliaETH";
     });
+  });
 }
 
 const copyAddressButton = document.getElementById("copy-address-button");
@@ -80,6 +79,7 @@ copyAddressButton.addEventListener("click", () => {
       console.error("Failed to copy text: ", err);
     });
 });
+
 
 //------------------------------------------------------------
 // Header buttons
@@ -170,7 +170,7 @@ footerHomeButton.addEventListener("click", () => {
     elem.classList.add("hidden");
   });
 
-  updateLocalHistory();
+  //updateLocalHistory();
 
   Array.from(footerButtons).forEach((elem) => {
     elem.classList.remove("active");
@@ -208,13 +208,23 @@ footerSettingsButton.addEventListener("click", () => {
 
 //------------------------------------------------------------
 // Send tx
-// TODO: block button when processing
 const sendTxButton = document.getElementById("send-tx-button");
 sendTxButton.addEventListener("click", async () => {
+  sendTxButton.disabled = true;
   const sendAddressInput = document.getElementById("send-address-input");
   const sendAmountInput = document.getElementById("send-amount-input");
-  // Add validation checks later
-  console.log(signer, sendAddressInput.value, sendAmountInput.value.toString());
+  // TODO: 
+  // errors
+  if (!sendAddressInput.value){
+    alert("Put address!");
+    sendTxButton.disabled = false;
+    return;
+  }
+  if (!sendAmountInput.value){
+    alert("Put value!");
+    sendTxButton.disabled = false;
+    return;
+  }
   // TODO: add try except to not push errors to local history
   await sendTransaction(
     sendAddressInput.value,
@@ -223,34 +233,42 @@ sendTxButton.addEventListener("click", async () => {
   ).then(async (result) => {
     localHistory.push(result);
     if (footerHomeButton.classList.contains("active")) {
-      updateLocalHistory();
+      //updateLocalHistory();
     }
     const sendPopup = document.getElementById("send-popup");
     sendPopup.classList.add("hidden");
     await updateBalance();
   });
+  sendTxButton.disabled = false;
+
 });
 
 //------------------------------------------------------------
 // Deploy contract
-// TODO: block button when processing
 const abiInput = document.getElementById("contract-abi-input");
 const bytecodeInput = document.getElementById("contract-bytecode-input");
 const deployContractButton = document.getElementById("contract-delploy");
 deployContractButton.addEventListener("click", async () => {
-  await deploySmartContract(
-    bytecodeInput.value,
-    JSON.parse(abiInput.value)
-  ).then(async (result) => {
-    console.log(result);
-    localHistory.push(result);
-    if (footerHomeButton.classList.contains("active")) {
-      updateLocalHistory();
-    }
-    const contractPopup = document.getElementById("contract-popup");
-    contractPopup.classList.add("hidden");
-    await updateBalance();
-  });
+  deployContractButton.disabled = true;
+  try {
+    await deploySmartContract(
+      bytecodeInput.value,
+      JSON.parse(abiInput.value)
+    ).then(async (result) => {
+      console.log(result);
+      localHistory.push(result);
+      if (footerHomeButton.classList.contains("active")) {
+        //updateLocalHistory();
+      }
+      const contractPopup = document.getElementById("contract-popup");
+      contractPopup.classList.add("hidden");
+      await updateBalance();
+    });
+  } catch {
+    // TODO: remove alert
+    alert("Something went wrong");
+    deployContractButton.disabled = false;
+  }
 });
 //------------------------------------------------------------
 // Swap
@@ -265,15 +283,17 @@ const TOKEN_ADDRESS = "0x7169d38820dfd117c3fa1f22a697dba58d90ba06";
 const swapButton = document.getElementById("swap-token-button");
 const swapAmountInput = document.getElementById("swap-amount-input");
 swapButton.addEventListener("click", async () => {
+  swapButton.disabled = true;
   const amountInEth = swapAmountInput.value;
   await swapSepoliaEthForTokens(amountInEth).then(async (result) => {
     localHistory.push(result);
     if (footerHomeButton.classList.contains("active")) {
-      updateLocalHistory();
+      //updateLocalHistory();
     }
     const contractPopup = document.getElementById("swap-popup");
     contractPopup.classList.add("hidden");
     await updateBalance();
+    swapButton.disabled = false;
   });
 });
 
@@ -281,7 +301,9 @@ swapButton.addEventListener("click", async () => {
 // Local History
 
 function updateLocalHistory() {
-  const localHistoryContainer = document.getElementById("local-history-container");
+  const localHistoryContainer = document.getElementById(
+    "local-history-container"
+  );
   localHistoryContainer.classList.remove("hidden");
   localHistoryContainer.innerHTML = "";
   console.log(localHistory);
@@ -320,10 +342,26 @@ function updateLocalHistory() {
 //------------------------------------------------------------
 // History
 
-const graphContainer = document.getElementById("graph-container");
+// const graphContainer = document.getElementById("graph-container");
 // TODO: change to actual graph
 function buildGraph(data) {
-  graphContainer.innerHTML = data;
+
+  new Chart("graph-chart", {
+    type: "line",
+    data: {
+      labels: data.map((el) => el.dateTime),
+      datasets: [{
+        fill: false,
+        lineTension: 0,
+        backgroundColor: "rgba(50,152,255,1.0)",
+        borderColor: "rgba(50,152,255,1.0)",
+        data: data.map((el) => el.balance)
+      }]
+    },
+    options: {
+      legend: { display: false },
+    },
+  });
 }
 
 const dayGraphButton = document.getElementById("graph-button1");
@@ -332,7 +370,7 @@ const monthraphButton = document.getElementById("graph-button30");
 const yearGraphButton = document.getElementById("graph-button365");
 
 dayGraphButton.addEventListener("click", async () => {
-  graphContainer.innerHTML = "";
+  // graphContainer.innerHTML = "";
   console.log("start");
   dayGraphButton.classList.add("active-graph-button");
   weakGraphButton.classList.remove("active-graph-button");
@@ -345,7 +383,7 @@ dayGraphButton.addEventListener("click", async () => {
 });
 
 weakGraphButton.addEventListener("click", async () => {
-  graphContainer.innerHTML = "";
+  // graphContainer.innerHTML = "";
   dayGraphButton.classList.remove("active-graph-button");
   weakGraphButton.classList.add("active-graph-button");
   monthraphButton.classList.remove("active-graph-button");
@@ -356,7 +394,7 @@ weakGraphButton.addEventListener("click", async () => {
 });
 
 monthraphButton.addEventListener("click", async () => {
-  graphContainer.innerHTML = "";
+  // graphContainer.innerHTML = "";
   dayGraphButton.classList.remove("active-graph-button");
   weakGraphButton.classList.remove("active-graph-button");
   monthraphButton.classList.add("active-graph-button");
@@ -367,7 +405,7 @@ monthraphButton.addEventListener("click", async () => {
 });
 
 yearGraphButton.addEventListener("click", async () => {
-  graphContainer.innerHTML = "";
+  // graphContainer.innerHTML = "";
   dayGraphButton.classList.remove("active-graph-button");
   weakGraphButton.classList.remove("active-graph-button");
   monthraphButton.classList.remove("active-graph-button");
@@ -381,15 +419,25 @@ yearGraphButton.addEventListener("click", async () => {
 // Setting
 
 const logOutButton = document.getElementById("logout-button");
-logOutButton.addEventListener("click", () => {
-  // TODO:
-  // add logic for logout
-  // null local storage params, web token, then redirect
-  console.log(1);
+logOutButton.addEventListener("click", async () => {
+  await putValueToLocalStorage("passwordHash", "", "");
+  await putValueToLocalStorage("mnemonic", "", "");
+  await putValueToLocalStorage("privateKey", "", "");
+  await putValueToLocalStorage("publicKey", "", "");
+  await putValueToLocalStorage("address", "", "");
+
+  window.location.href = "recover.html";
 });
 
 const copyPrivKeyButton = document.getElementById("copy-private-key");
 copyPrivKeyButton.addEventListener("click", () => {
   navigator.clipboard.writeText(privateKey);
   alert("Private key copied to clipboard!");
+});
+
+//------------------------------------------------------------
+// Extension button
+document.getElementById("openTabButton").addEventListener("click", async () => {
+  const extensionURL = browser.runtime.getURL("utils/home.html"); 
+  await browser.tabs.create({ url: extensionURL });
 });

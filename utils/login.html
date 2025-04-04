@@ -5,16 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Extension Page</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="login.css">
     <script src="lib/cryptojs.min.js"></script>
     <script src="lib/ethers.min.js"></script>
     <script src="lib/qrcode.min.js"></script>
 </head>
 <body>
+    <div id="openTabButton">
+        <img src = "../assets/newtab-24.png" id = "new-tab-img">
+    </div>
+    <div class="center-logo">
+        <img src = "../assets/logo.png"> CircuitWallet
+    </div>
     <div id="app-login">
         <input class = "password-input" id = "login-password-input" type = "password" placeholder="Password"></input>
         <button id = "login-button">Login</button>
+        <div id = forgot-password-button>Forgot password?</div>
     </div>
-    <div id = forgot-password-button>Forgot password?</div>
     <script src = "cypher.js" defer></script>
     <script src="login.js" deref></script>
 </body>

@@ -11,5 +11,5 @@
 document.getElementById("hui").addEventListener("click", () => {
 
   console.log(browser);
-  window.location.href='../utils/register.html';
+  window.location.href='../utils/recover.html';
 });

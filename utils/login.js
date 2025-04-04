@@ -30,3 +30,10 @@ const forgotPasswordButton = document.getElementById("forgot-password-button");
 forgotPasswordButton.addEventListener("click", ()=>{
     window.location.href = "recover.html";
 });
+
+//------------------------------------------------------------
+// Extension button
+document.getElementById("openTabButton").addEventListener("click", async () => {
+    const extensionURL = browser.runtime.getURL("utils/login.html"); 
+    await browser.tabs.create({ url: extensionURL });
+  });
