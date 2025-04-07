@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Extension Page</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="register.css">
     <script src="lib/cryptojs.min.js"></script>
     <script src="lib/ethers.min.js"></script>
     <script src="lib/qrcode.min.js"></script>
@@ -16,9 +17,11 @@
     <div id="app-password">
         <input class = "password-input" id = "password" type = "password" placeholder="Password"></input>
         <input class = "password-input" id = "confirm-password" type = "password" placeholder="Confirm password"></input>
+
+        <button class = "nav-button" id = "nav-button-next1">Next</button>
+
         <button id = "to-login-button">To login</button>
         <button id = "to-recover-button">Import from phrase</button>
-        <button class = "nav-button" id = "nav-button-next1">Next</button>
     </div>
     <div id="app-phrase" class = "hidden">
         <div class="grid-container">
@@ -37,12 +40,15 @@
             <input class="phrase-container row3 column3" type="text" readonly></input>
             <input class="phrase-container row3 column4" type="text" readonly></input>
         </div>
-        
-        <label class = "info-label">Make sure nobody is watching</label>
-        <button id = "reveal-button">Reveal mnemonnic phrase</button> 
-        <button id = "phrase-copy-button">Copy to clipboard</button>
-        <button class = "nav-button" id = "nav-button-previous2">Previous</button>
-        <button class = "nav-button" id = "nav-button-next2">Next</button>
+        <div class="to-center-container">
+            <label class = "info-label">Make sure nobody is watching</label>
+            <button id = "reveal-button" class="action-button">Reveal mnemonnic phrase</button> 
+            <button id = "phrase-copy-button" class="action-button">Copy to clipboard</button>
+            <div>
+                <button class = "nav-button" id = "nav-button-previous2">Previous</button>
+                <button class = "nav-button" id = "nav-button-next2">Next</button>
+            </div>
+        </div>
     </div>
     <div id="app-confirm-phrase" class = "hidden">
         <div class="grid-container">
@@ -61,14 +67,15 @@
             <input class="phrase-container row3 column3" type="text"></input>
             <input class="phrase-container row3 column4" type="text"></input>
         </div>
-        
-        <label class = "info-label">Put missing words to phrase</label>
-        <button id = "confirm-button">Confirm</button> 
-        <button class = "nav-button" id = "nav-button-previous3">Previous</button>
+        <div class="to-center-container">
+            <label class = "info-label">Put missing words to phrase</label>
+            <button id = "confirm-button" class="action-button">Confirm</button> 
+            <button class = "nav-button" id = "nav-button-previous3">Previous</button>
+        </div>
 
     </div>
     <script src = "cypher.js" defer></script>
-    <script src="keys.js" defer></script>
-    <script src="register.js" deref></script>
+    <script src = "keys.js" defer></script>
+    <script src = "register.js" deref></script>
 </body>
 </html>

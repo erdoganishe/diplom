@@ -1,10 +1,9 @@
 let localHistory = [];
-// let privateKey = getValueFromLocalStorage("privateKey", password);
-// let address = config.TEST_RANDOM_ADDRESS;
 let mnemonic = "";
 let privateKey = "";
 let address = "";
 let publicKey = "";
+let cypherKey = "";
 let INFURA_API_KEY = config.INFURA_API_KEY;
 const provider = new ethers.providers.JsonRpcProvider(
   "https://sepolia.infura.io/v3/" + INFURA_API_KEY
@@ -12,11 +11,13 @@ const provider = new ethers.providers.JsonRpcProvider(
 let signer;
 
 document.addEventListener("DOMContentLoaded", async () => {
+  // await browser.storage.local.set({localHistory: ""});
   await getPassword()
     .then(async (password) => {
       if (password == "") {
         window.location.href = "login.html";
       }
+      cypherKey = password;
       await getValueFromLocalStorage("mnemonic", password).then(
         (result) => (mnemonic = result)
       );
@@ -29,6 +30,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       await getValueFromLocalStorage("address", password).then(
         (result) => (address = result)
       );
+      try {
+        await getValueFromLocalStorage("localHistory", password).then(
+          (result) => {localHistory = JSON.parse(result)}
+        );
+      } catch(error) {
+        console.log("error while reading history!");
+        console.log(error);
+      }
 
       savePassword("");
     })
@@ -48,8 +57,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
     });
   let curBal = 0;
-
+  
   await updateBalance();
+  // TODO: fix local history
+  // TODO: add edge case for clear history
+  await updateLocalHistory();
+  await fetchRecentBalances(address, 6, 1160).then((result) => {
+    buildGraph(result);
+  });
 
   copyAddressButton.innerHTML = address.slice(0,6) + "..." + address.slice(-4);
 });
@@ -165,17 +180,19 @@ const footerSettingsButton = document.getElementById("footer-settings-button");
 const footerButtons = document.getElementsByClassName("footer-button");
 const mainContentDivs = document.getElementsByClassName("main-content-div");
 // TODO: add active ...
-footerHomeButton.addEventListener("click", () => {
+footerHomeButton.addEventListener("click", async () => {
   Array.from(mainContentDivs).forEach((elem) => {
     elem.classList.add("hidden");
   });
 
-  //updateLocalHistory();
+  await updateLocalHistory();
 
   Array.from(footerButtons).forEach((elem) => {
     elem.classList.remove("active");
+    elem.children[0].src = elem.children[0].src.toString().replaceAll("_active", "");
   });
   footerHomeButton.classList.add("active");
+  footerHomeButton.children[0].src = footerHomeButton.children[0].src.toString().slice(0, -4) + "_active.png";
 });
 
 footerHistoryButton.addEventListener("click", () => {
@@ -183,13 +200,16 @@ footerHistoryButton.addEventListener("click", () => {
 
   Array.from(mainContentDivs).forEach((elem) => {
     elem.classList.add("hidden");
+    console.log(elem.classList);
   });
   historyContainer.classList.remove("hidden");
 
   Array.from(footerButtons).forEach((elem) => {
     elem.classList.remove("active");
+    elem.children[0].src = elem.children[0].src.toString().replaceAll("_active", "");
   });
   footerHistoryButton.classList.add("active");
+  footerHistoryButton.children[0].src = footerHistoryButton.children[0].src.toString().slice(0, -4) + "_active.png";
 });
 
 footerSettingsButton.addEventListener("click", () => {
@@ -202,8 +222,10 @@ footerSettingsButton.addEventListener("click", () => {
 
   Array.from(footerButtons).forEach((elem) => {
     elem.classList.remove("active");
+    elem.children[0].src = elem.children[0].src.toString().replaceAll("_active", "");
   });
   footerSettingsButton.classList.add("active");
+  footerSettingsButton.children[0].src = footerSettingsButton.children[0].src.toString().slice(0, -4) + "_active.png";
 });
 
 //------------------------------------------------------------
@@ -227,20 +249,23 @@ sendTxButton.addEventListener("click", async () => {
   }
   // TODO: add try except to not push errors to local history
   await sendTransaction(
-    sendAddressInput.value,
-    sendAmountInput.value.toString(),
-    signer
-  ).then(async (result) => {
-    localHistory.push(result);
-    if (footerHomeButton.classList.contains("active")) {
-      //updateLocalHistory();
-    }
-    const sendPopup = document.getElementById("send-popup");
-    sendPopup.classList.add("hidden");
-    await updateBalance();
-  });
-  sendTxButton.disabled = false;
-
+    await sendTransaction(
+      sendAddressInput.value,
+      sendAmountInput.value.toString(),
+      signer
+    ).then(async (result) => {
+      localHistory.push(result);
+      if (footerHomeButton.classList.contains("active")) {
+        await updateLocalHistory();
+      }
+      document.getElementById("send-popup").classList.add("hidden");
+      await updateBalance();
+    }).catch((error) => {
+      console.error("Transaction failed:", error);
+      alert("An error occurred while sending the transaction.");
+    }).finally(() => {
+      sendTxButton.disabled = false;
+    }));
 });
 
 //------------------------------------------------------------
@@ -258,7 +283,7 @@ deployContractButton.addEventListener("click", async () => {
       console.log(result);
       localHistory.push(result);
       if (footerHomeButton.classList.contains("active")) {
-        //updateLocalHistory();
+        await updateLocalHistory();
       }
       const contractPopup = document.getElementById("contract-popup");
       contractPopup.classList.add("hidden");
@@ -288,7 +313,7 @@ swapButton.addEventListener("click", async () => {
   await swapSepoliaEthForTokens(amountInEth).then(async (result) => {
     localHistory.push(result);
     if (footerHomeButton.classList.contains("active")) {
-      //updateLocalHistory();
+      await updateLocalHistory();
     }
     const contractPopup = document.getElementById("swap-popup");
     contractPopup.classList.add("hidden");
@@ -300,7 +325,7 @@ swapButton.addEventListener("click", async () => {
 //------------------------------------------------------------
 // Local History
 
-function updateLocalHistory() {
+async function updateLocalHistory() {
   const localHistoryContainer = document.getElementById(
     "local-history-container"
   );
@@ -316,14 +341,37 @@ function updateLocalHistory() {
         break;
       }
       case "send": {
-        historyElem.innerHTML =
-          elem.txHash +
-          " " +
-          elem.value +
-          " ETH " +
-          elem.to +
-          " " +
-          elem.timestamp;
+        historyElem.classList.add("local-history-elem-tx");
+
+        const img  = document.createElement("img");
+        img.src = "../assets/send.png";
+
+        const paramsDiv = document.createElement("div");
+        paramsDiv.classList.add("to-center-div", "fixed-width");
+        
+        const recepientDiv = document.createElement("div");
+        recepientDiv.classList.add("local-history-elem-tx-recepint");
+        recepientDiv.innerHTML = elem.to.slice(0, 6) + "..." + elem.to.slice(-4);
+        recepientDiv.addEventListener("click", ()=>{
+          navigator.clipboard.writeText(elem.to);
+        })
+        const txHashDiv = document.createElement("div");
+        txHashDiv.classList.add("local-history-elem-tx-hash");
+        txHashDiv.innerHTML = elem.txHash.slice(0, 6) + "..." + elem.txHash.slice(-4);
+        txHashDiv.addEventListener("click", ()=>{
+          navigator.clipboard.writeText(elem.txHash);
+        })
+        paramsDiv.appendChild(recepientDiv);
+        paramsDiv.appendChild(txHashDiv);
+
+        const amountDiv = document.createElement("div");
+        amountDiv.classList.add("local-history-elem-tx-amount", "fixed-width", "div-to-right");
+        amountDiv.innerHTML = parseFloat(elem.value).toFixed(4).toString() + " SepoliaETH";
+
+        historyElem.appendChild(img);
+        historyElem.appendChild(paramsDiv);
+        historyElem.appendChild(amountDiv);
+
         break;
       }
       case "contract": {
@@ -337,13 +385,14 @@ function updateLocalHistory() {
 
     localHistoryContainer.appendChild(historyElem);
   });
+
+  await putValueToLocalStorage("localHistory", JSON.stringify(localHistory), cypherKey);
 }
 
 //------------------------------------------------------------
 // History
+// TODO: graph change waiting animation
 
-// const graphContainer = document.getElementById("graph-container");
-// TODO: change to actual graph
 function buildGraph(data) {
 
   new Chart("graph-chart", {
@@ -371,13 +420,12 @@ const yearGraphButton = document.getElementById("graph-button365");
 
 dayGraphButton.addEventListener("click", async () => {
   // graphContainer.innerHTML = "";
-  console.log("start");
   dayGraphButton.classList.add("active-graph-button");
   weakGraphButton.classList.remove("active-graph-button");
   monthraphButton.classList.remove("active-graph-button");
   yearGraphButton.classList.remove("active-graph-button");
 
-  await fetchRecentBalances(address, 12, 580).then((result) => {
+  await fetchRecentBalances(address, 6, 2*580).then((result) => {
     buildGraph(result);
   });
 });
@@ -388,7 +436,7 @@ weakGraphButton.addEventListener("click", async () => {
   weakGraphButton.classList.add("active-graph-button");
   monthraphButton.classList.remove("active-graph-button");
   yearGraphButton.classList.remove("active-graph-button");
-  await fetchRecentBalances(address, 14, 3500).then((result) => {
+  await fetchRecentBalances(address, 7, 7000).then((result) => {
     buildGraph(result);
   });
 });
@@ -399,7 +447,7 @@ monthraphButton.addEventListener("click", async () => {
   weakGraphButton.classList.remove("active-graph-button");
   monthraphButton.classList.add("active-graph-button");
   yearGraphButton.classList.remove("active-graph-button");
-  await fetchRecentBalances(address, 15, 14000).then((result) => {
+  await fetchRecentBalances(address, 7, 28000).then((result) => {
     buildGraph(result);
   });
 });
@@ -410,7 +458,7 @@ yearGraphButton.addEventListener("click", async () => {
   weakGraphButton.classList.remove("active-graph-button");
   monthraphButton.classList.remove("active-graph-button");
   yearGraphButton.classList.add("active-graph-button");
-  await fetchRecentBalances(address, 12, 210000).then((result) => {
+  await fetchRecentBalances(address, 6, 420000).then((result) => {
     buildGraph(result);
   });
 });
@@ -420,13 +468,14 @@ yearGraphButton.addEventListener("click", async () => {
 
 const logOutButton = document.getElementById("logout-button");
 logOutButton.addEventListener("click", async () => {
-  await putValueToLocalStorage("passwordHash", "", "");
-  await putValueToLocalStorage("mnemonic", "", "");
-  await putValueToLocalStorage("privateKey", "", "");
-  await putValueToLocalStorage("publicKey", "", "");
-  await putValueToLocalStorage("address", "", "");
-
-  window.location.href = "recover.html";
+  await browser.storage.local.set({ passwordHash: "" });
+  await browser.storage.local.set({ mnemonic: "" });
+  await browser.storage.local.set({ privateKey: "" });
+  await browser.storage.local.set({ publicKey: "" });
+  await browser.storage.local.set({ address: "" });
+  await browser.storage.local.set({ localHistory: "" });
+  console.log("clear");
+  window.location.href = "register.html";
 });
 
 const copyPrivKeyButton = document.getElementById("copy-private-key");
@@ -441,3 +490,4 @@ document.getElementById("openTabButton").addEventListener("click", async () => {
   const extensionURL = browser.runtime.getURL("utils/home.html"); 
   await browser.tabs.create({ url: extensionURL });
 });
+

@@ -32,3 +32,12 @@ async function getPassword(){
 
     return result.userPassword;
 }
+
+async function checkForStoredData(){
+    const result = await browser.storage.local.get("passwordHash");
+    console.log(result);
+    if (result.passwordHash){
+        return true;
+    }
+    return false;
+}

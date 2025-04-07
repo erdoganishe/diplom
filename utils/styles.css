@@ -1,5 +1,5 @@
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .grid-container {
@@ -103,3 +103,31 @@ input {
   position: fixed;
 }
 
+.to-center-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.action-button{
+  width: 250px;
+  height: 40px;
+  color: white;
+  margin-top: 30px;
+  text-align: center;
+  background-color: rgb(50, 152, 253);
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 10px;
+}
+
+.action-button:disabled{
+  background-color: rgb(25, 76, 127);
+}
+
+.info-label{
+  font-weight: bold;
+  font-size: 25px;
+  text-align: center;
+  margin-top: 20px;
+}
