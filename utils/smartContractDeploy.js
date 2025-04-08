@@ -8,8 +8,7 @@ async function deploySmartContract(bytecode, abi){
           await contract.deployed();
           return {txHash: contract.deployTransaction.hash, status: true};
         } catch(e) {
-          //TODO: catch errors
-          console.log(e);
+          showError("Contract deployed, but revert occured!");
           return {type: "contract", txHash: contract.deployTransaction.hash, status: false};
         }
     } catch (error) {
