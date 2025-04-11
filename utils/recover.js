@@ -47,19 +47,19 @@ conformNewPasswordButton.addEventListener("click", async () => {
       window.location.href = "home.html";
     } catch (e) {
       console.error(e);
-      alert("Invalid mnemonic");
+      showError("Invalid mnemonic");
     }
   } else {
     if (!passwordInputs[0].value) {
-      alert("Provide password!");
+      showError("Provide password!");
       return;
     }
     if (!passwordInputs[1].value) {
-      alert("Provide password confirmation!");
+      showError("Provide password confirmation!");
       return;
     }
     if (passwordInputs[0].value != passwordInputs[1].value) {
-      alert("Passwords don`t match!");
+      showError("Passwords don`t match!");
       return;
     }
   }

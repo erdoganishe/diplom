@@ -343,14 +343,53 @@ async function updateLocalHistory() {
   );
   localHistoryContainer.classList.remove("hidden");
   localHistoryContainer.innerHTML = "";
+
+  console.log(localHistory.length);
+
+  if (localHistory.length == 0){
+    console.log(1);
+    localHistoryContainer.innerHTML = "No operation yet!";
+  }
+
+
   console.log(localHistory);
   localHistory.forEach((elem) => {
     const historyElem = document.createElement("div");
     // TODO: Add some more to div (class, children, etc)
     switch (elem.type) {
       case "swap": {
-        historyElem.innerHTML = elem.txHash + " " + elem.amount + " ETH";
+        historyElem.classList.add("local-history-elem-swap");
+
+        const img = document.createElement("img");
+        img.src = "../assets/swap.png";
+
+        const paramsDiv = document.createElement("div");
+        paramsDiv.classList.add("to-center-div", "fixed-width");
+
+        const recepientDiv = document.createElement("div");
+        recepientDiv.classList.add("local-history-elem-tx-hash");
+        recepientDiv.innerHTML =
+          elem.txHash.slice(0, 6) + "..." + elem.txHash.slice(-4);
+        recepientDiv.addEventListener("click", () => {
+          navigator.clipboard.writeText(elem.txHash);
+        });
+        
+        paramsDiv.appendChild(recepientDiv);
+
+        const amountDiv = document.createElement("div");
+        amountDiv.classList.add(
+          "fixed-width",
+          "div-to-right"
+        );
+        
+
+        historyElem.appendChild(img);
+        historyElem.appendChild(paramsDiv);
+        historyElem.appendChild(amountDiv);
+
         break;
+        // historyElem.innerHTML = elem.txHash + " " + elem.amount + " ETH";
+        // break;
       }
       case "send": {
         historyElem.classList.add("local-history-elem-tx");
@@ -394,16 +433,51 @@ async function updateLocalHistory() {
         break;
       }
       case "contract": {
-        historyElem.innerHTML = elem.txHash + " " + elem.status;
+        historyElem.classList.add("local-history-elem-contract");
+
+        const img = document.createElement("img");
+        img.src = "../assets/smart.png";
+
+        const paramsDiv = document.createElement("div");
+        paramsDiv.classList.add("to-center-div", "fixed-width");
+
+        const recepientDiv = document.createElement("div");
+        recepientDiv.classList.add("local-history-elem-tx-recepint");
+        recepientDiv.innerHTML =
+          "Status: "+ elem.status? "Success!" : "Revert!";
+        const txHashDiv = document.createElement("div");
+        txHashDiv.classList.add("local-history-elem-tx-hash");
+        txHashDiv.innerHTML =
+          elem.txHash.slice(0, 6) + "..." + elem.txHash.slice(-4);
+        txHashDiv.addEventListener("click", () => {
+          navigator.clipboard.writeText(elem.txHash);
+        });
+        paramsDiv.appendChild(recepientDiv);
+        paramsDiv.appendChild(txHashDiv);
+
+        const amountDiv = document.createElement("div");
+        amountDiv.classList.add(
+          "fixed-width",
+          "div-to-right"
+        );
+
+        historyElem.appendChild(img);
+        historyElem.appendChild(paramsDiv);
+        historyElem.appendChild(amountDiv);
+
         break;
+        // historyElem.innerHTML = elem.txHash + " " + elem.status;
+        // break;
       }
       default: {
-        historyElem.innerHTML = "Unknown operation";
+        break;
       }
     }
 
     localHistoryContainer.appendChild(historyElem);
   });
+
+  
 
   await putValueToLocalStorage(
     "localHistory",
@@ -414,7 +488,6 @@ async function updateLocalHistory() {
 
 //------------------------------------------------------------
 // History
-// TODO: graph change waiting animation
 
 function buildGraph(data) {
   new Chart("graph-chart", {
@@ -531,7 +604,7 @@ logOutButton.addEventListener("click", async () => {
 const copyPrivKeyButton = document.getElementById("copy-private-key");
 copyPrivKeyButton.addEventListener("click", () => {
   navigator.clipboard.writeText(privateKey);
-  alert("Private key copied to clipboard!");
+  showError("Private key copied to clipboard!");
 });
 
 //------------------------------------------------------------

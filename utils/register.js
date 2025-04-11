@@ -19,15 +19,15 @@ firstButtonNext.addEventListener("click", () => {
     processKeys(isFirst);
   } else {
     if (!passwordInputs[0].value) {
-      alert("Provide password!");
+      showError("Provide password!");
       return;
     }
     if (!passwordInputs[1].value) {
-      alert("Provide password confirmation!");
+      showError("Provide password confirmation!");
       return;
     }
     if (passwordInputs[0].value != passwordInputs[1].value) {
-      alert("Passwords don`t match!");
+      showError("Passwords don`t match!");
       return;
     }
   }
@@ -87,7 +87,7 @@ confirmButton.addEventListener("click", async () => {
 
     window.location.href = "home.html";
   } else {
-    alert("Wrong phrase!");
+    showError("Wrong phrase!");
   }
 });
 
@@ -97,7 +97,7 @@ phraseCopyButton.addEventListener("click", () => {
     .writeText(params.mnemonic)
     .then(() => {
       console.log("Text copied to clipboard");
-      alert("Text copied to clipboard!");
+      showError("Text copied to clipboard!");
     })
     .catch((err) => {
       console.error("Failed to copy text: ", err);

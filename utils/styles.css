@@ -16,7 +16,6 @@ div.hidden {
 body{
   width: 600px;
   height: 480px;
-  border: 1px solid red;
   background-color: rgba(14, 14, 14);
   color: white;
   border-radius: 10px;
@@ -142,4 +141,5 @@ input {
   position: fixed;
   top: 5px;
   left: 100px;
+  text-align: center;
 }

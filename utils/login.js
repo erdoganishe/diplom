@@ -17,7 +17,7 @@ loginButton.addEventListener("click", async () => {
                 console.log("Some error: ", e);
             }
         } else {
-            alert("Wrong Password!");
+            showError("Wrong Password!");
         }
     });
    
