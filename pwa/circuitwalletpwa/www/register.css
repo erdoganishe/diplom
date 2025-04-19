@@ -1,0 +1,28 @@
+#app-password{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.nav-button{
+    width: 80px;
+    height: 50px;
+    border-radius: 25px;
+    font-size: 20px;
+    color: white;
+    background-color: rgb(50, 152, 253);
+    text-align: center;
+    margin-top: 20px;
+}
+
+#to-login-button{
+    margin-top: 200px;   
+}
+
+#to-recover-button{
+    margin-top: 40px;
+}
+
+#app-phrase{
+    margin-top: 40px;
+}

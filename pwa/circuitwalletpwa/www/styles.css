@@ -1,0 +1,145 @@
+.hidden {
+  display: none !important;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-left: 10px;
+}
+
+div.hidden {
+  display: none;
+}
+
+body{
+  width: 400px;
+  height: 480px;
+  background-color: rgba(14, 14, 14);
+  color: white;
+  border-radius: 10px;
+}
+
+#new-tab-img{
+  width: 24px;
+  height: 24px;
+}
+
+.phrase-container {
+  width: 100px; 
+  height: 20px; 
+  margin: 5px; 
+  padding: 8px; 
+  font-size: 14px; 
+  box-sizing: border-box;
+  align-items: center;
+  background-color: rgb(28, 28, 28);
+  border-radius: 3px;
+  color: white;
+}
+
+.password-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px auto;
+  max-width: 300px;
+}
+
+
+.password-input {
+  width: 295px;
+  height: 20px;
+  margin: 10px 0;
+  padding: 8px;
+  border-radius: 5px;
+}
+
+.password-info {
+  text-align: center;
+  margin-bottom: 5px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+button, input{
+  all: unset;
+}
+
+input {
+  background-color: rgb(28, 28, 28);
+  border: 1px solid rgb(50, 152, 253);
+}
+
+#confirm-new-password-button{
+  width: 300px;
+  height: 30px;
+  border-radius: 15px;
+  border: 1px solid white;
+  text-align: center;
+  background-color: rgb(50, 152, 253);
+  color: white;
+  margin: 5px;
+  font-size: 26px;
+}
+
+.center-logo{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.center-logo img{
+  width: 48px;
+  height: 48px;
+}
+
+#openTabButton{
+  position: fixed;
+}
+
+.to-center-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.action-button{
+  width: 250px;
+  height: 40px;
+  color: white;
+  margin-top: 30px;
+  text-align: center;
+  background-color: rgb(50, 152, 253);
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 10px;
+}
+
+.action-button:disabled{
+  background-color: rgb(25, 76, 127);
+}
+
+.info-label{
+  font-weight: bold;
+  font-size: 25px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.error-div{
+  width: 250px;
+  height: 50px;
+  border-radius: 10px;
+  color: white;
+  background-color: rgb(56, 56, 56);
+  border: 1px solid white;
+  position: fixed;
+  top: 5px;
+  left: 75px;
+  text-align: center;
+}

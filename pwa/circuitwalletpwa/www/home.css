@@ -1,0 +1,232 @@
+.header-button{
+    width: 48px;
+    height: 48px;
+    border-radius: 48px;    
+    background-color: rgb(50, 152, 253);
+}
+
+#header{
+    display: flex;
+    justify-content: space-around;
+}
+
+#footer{
+    display: flex;
+    justify-content: space-around;
+}
+
+.footer-button{
+    border-radius: 10px;
+    height: 30px;
+    width: 120px;
+    background-color: rgb(50, 152, 253);
+    color: white;
+    display: flex;
+    justify-content: center;
+}
+
+.footer-button-img{
+    height: 24px;
+    margin-top: 3px;
+    width: 24px;
+}
+
+.active{
+    border: 1px solid rgb(50, 152, 253);
+    background-color: rgb(227, 227, 227);
+    color: rgb(50, 152, 253);
+}
+
+#main-content{
+    width: 500px;
+    margin-left: 50px;
+    border: 1px solid rgb(50, 152, 253);
+    height: 250px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+}
+
+.header-button-img{
+    width: 36px;
+    height: 36px;
+    margin-top: 6px;
+    margin-left: 6px;
+}
+
+.inner-popup{
+    position: fixed;
+    width: 500px;
+    height: 250px;
+    margin-left: 50px;
+    margin-top: 10px;
+    background-color: rgb(42,42,42);
+    border: 1px solid rgb(50, 152, 253);
+    border-radius: 10px;
+}
+
+.close-button{
+    width: 10px;
+    height: 10px;
+    position: fixed;
+    margin-left: 485px;
+    margin-top: 5px;
+}
+
+.copy-address-button{
+    color: rgb(227, 227, 227);
+}
+
+.value-input, .string-input, .contract-input{
+    color: white;
+    height: 40px;
+    border-radius: 10px;
+    background-color: rgb(27, 27, 27);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 15px;
+    padding-left: 5px; 
+}
+
+.value-input{
+    width: 195px;
+}
+
+.string-input{
+    width: 370px;
+}
+
+.contract-input{
+    width: 370px;
+}
+
+#graph-chart{
+    padding-top: 3%;
+    padding-left: 3%;
+    width:90%;
+    max-width:450px;
+    height: 80%;
+    max-height: 200px;
+}
+
+.token-div{
+    margin-top: 15px;
+    width: 165px;
+    height: 40px;
+    border-radius: 10px;
+    justify-content: space-between;
+    display: flex;
+    align-items: center;
+    background-color: rgb(27, 27, 27);
+    border: 1px solid rgb(50, 152, 253);
+    margin-left: 10px;
+    padding-right: 10px;
+
+}
+.token-img{
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    margin: 5px;
+}
+
+
+.token-div-container {
+    display: flex;
+    align-items: center; 
+    justify-content: center; 
+
+}
+
+#local-history-container{
+    display: flex;
+    align-items: center; 
+    justify-content: space-around;
+    flex-direction: column;
+    overflow-y: auto;
+    height: 250px;
+}
+
+.local-history-elem-tx, .local-history-elem-swap, .local-history-elem-contract{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    padding-right: 15px;
+}
+
+.local-history-elem-tx, .local-history-elem-contract, .local-history-elem-swap{
+    width: 450px;
+    height: 80px;
+    border-radius: 15px;
+    border: 1px solid rgb(50, 152, 253);
+}
+
+.local-history-elem-tx img, .local-history-elem-contract img, .local-history-elem-swap img{
+    margin-top: 10px;
+    margin-left: 10px;
+    width: 60px;
+    height: 60px;
+}
+
+.fixed-width{
+    width: 170px;
+}
+
+.div-to-right{
+    text-align: right;
+}
+
+.graph-button{
+    width: 115px;
+    height: 20px;
+    border-radius: 5px;
+    color: white;
+    background-color: rgb(50, 152, 253);
+}
+
+.active-graph-button{
+    color: rgb(50, 152, 253);
+    border: 1px solid rgb(50, 152, 253);
+    background-color: rgb(227, 227, 227);
+}
+
+#graph-buttons-container{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    /* border-radius: 5px;
+    height: 25px;
+    background-color: rgb(81, 81, 81); */
+}
+
+#copy-private-key{
+    width: 400px;
+    text-align: center;
+    height: 30px;
+    color: white;
+    background-color: rgb(50, 152, 253);
+    font-style: bold;
+    border-radius: 15px;
+    margin-top: 50px;
+}
+
+#logout-button{
+    text-align: center;
+    width: 150px;
+    height: 30px;
+    color: rgb(255, 148, 146);
+    border: rgb(50, 152, 253) 1px solid;
+    background-color: rgb(42,49,60);
+    font-style: bold;
+    border-radius: 15px;
+    margin-top: 50px;
+}
+
+#settings-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+

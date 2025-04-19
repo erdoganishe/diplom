@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>My Page</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="home.css">
+    <script src="lib/snarkjs.min.js"></script>
+    <script src="lib/cryptojs.min.js"></script>
+    <script src="lib/ethers.min.js"></script>
+    <script src="lib/qrcode.min.js"></script>
+    <script src="config.js"></script>
+    <script src="lib/chart.js"></script>
+  </head>
+  <body>
+    <div class="center-logo">
+        <img src = "assets/logo.png"> CircuitWallet
+    </div>
+    <div class="to-center-container">
+        <label id = "current-balance-label">0.0000 SepoliaETH</label>
+        <button id = "copy-address-button">0x0000...0000</button>
+    </div>
+    <div id = "header">
+        <button class="header-button" id = "header-send-button">
+            <img class="header-button-img" src = "../assets/send.png">
+        </button>
+        <button class="header-button" id = "header-receive-button">
+            <img class="header-button-img" src = "../assets/recieve.png">
+        </button>
+        <button class="header-button" id = "header-contract-button">
+            <img class="header-button-img" src = "../assets/smart.png">
+        </button>
+        <button class="header-button" id = "header-swap-button">
+            <img class="header-button-img" src = "../assets/swap.png">
+        </button>
+    </div>
+    <div class="inner-popup hidden" id = "send-popup">
+        <button class = "close-button" id = "send-close-button">X</button>
+        <div class="to-center-container">
+            <input class="string-input" id = "send-address-input" type = "text" placeholder="Recepient address"></input>
+            <div class="token-div-container">
+                <input class="value-input" id = "send-amount-input" placeholder="Amount"></input>
+                <div class = "token-div">
+                    <img src = "../assets/SETH.png" class="token-img">
+                    SepoliaETH
+                </div>
+            </div>
+            0xdc195871844C8676E14Af6A4b65Fa3A309047e86
+            <button id = "send-tx-button" class = "action-button">Send</button>
+        </div>
+        
+    </div>
+
+    <div class="inner-popup hidden" id = "swap-popup">
+        <button class = "close-button" id = "swap-close-button">X</button>
+
+        <div class="to-center-container">
+            <div class="token-div-container">
+                <input class="value-input" id = "swap-amount-input" placeholder="Amount"></input>
+                <div class = "token-div">
+                    <img src = "../assets/SETH.png" class="token-img">
+                    SepoliaETH
+                </div>
+            </div>
+            <button id = "swap-token-button" class="action-button">Swap</button>
+        </div>
+    </div>
+
+    <div class="inner-popup hidden" id = "receive-popup">
+        <button class = "close-button" id = "receive-close-button">X</button>
+        <div class="to-center-container">
+            <div id="qrCodeContainer" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+
+    <div class="inner-popup hidden" id = "contract-popup">
+        <button class = "close-button" id = "contract-close-button">X</button>
+        <div class="to-center-container">
+            <input class="contract-input" id = "contract-abi-input" type = "text" placeholder="abi"></input>
+            [         {           "inputs": [],           "name": "greet",           "outputs": [             {               "internalType": "string",               "name": "",               "type": "string"             }           ],           "stateMutability": "view",           "type": "function"         }       ]
+            <input class="contract-input" id = "contract-bytecode-input" type = "text" placeholder="bytecode"></input>
+            608060405234801561001057600080fd5b506004361061002b5760003560e01c8063cfae321714610030575b600080fd5b61003861004e565b6040516100459190610124565b60405180910390f35b60606040518060400160405280600581526020017f68656c6c6f000000000000000000000000000000000000000000000000000000815250905090565b600081519050919050565b600082825260208201905092915050565b60005b838110156100c55780820151818401526020810190506100aa565b838111156100d4576000848401525b50505050565b6000601f19601f8301169050919050565b60006100f68261008b565b6101008185610096565b93506101108185602086016100a7565b610119816100da565b840191505092915050565b6000602082019050818103600083015261013e81846100eb565b90509291505056fea26469706673582212206a88e5fc2cbb31aca036100317594eef00ab7e3975c29b02a81d4ed4674ed35a64736f6c634300080c0033
+            <button id = "contract-delploy" class="action-button">Deploy contract  </button>
+        </div>
+    </div>
+
+    <div id = "main-content"> 
+        <div id = "local-history-container" class = "main-content-div to-center-div hidden">
+                <!-- <div class="local-history-elem-tx">
+                    <img src = "../assets/send.png">
+                    <div class="to-center-div fixed-width">
+                        <div class="local-history-elem-tx-recepint">
+                            To: 0x0000...00
+                        </div>
+                        <div class="local-history-elem-tx-hash">
+                            TxHash: 0x0000...000
+                        </div>
+                    </div>
+                    <div class="local-history-elem-tx-amount fixed-width div-to-right">
+                        0.001 SepoliaETH
+                    </div>
+                </div>
+                <div class="local-history-elem-contract">
+                    <img src = "../assets/smart.png">
+                    <div class="to-center-div fixed-width">
+                        <div class="local-history-container-status">
+                            Status: Revert!
+                        </div>
+                        <div class="local-history-elem-tx-hash">
+                            Tx Hash: 0x0000...0000
+                        </div>
+                    </div>
+                    
+                    <div class="fixed-width div-to-right"></div>
+                </div>
+                <div class="local-history-elem-swap">
+                    <img src = "../assets/swap.png">
+                    <div class="to-center-div fixed-width">
+                        <div class="local-history-elem-tx-hash">
+                            Tx Hash: 0x0000...0000 
+                        </div>
+                    </div>
+                    <div class="local-history-elem-tx-amount fixed-width div-to-right">
+                        <div class="local-history-elem-swap-from">+14.88 USDT</div>
+                        <div class="local-history-elem-swap-to">-0.03 ETH</div>
+                    </div>
+                </div> -->
+        </div>
+        <div id = "history-container" class = "main-content-div hidden">
+            <div id = "graph-container">
+                <canvas id="graph-chart"></canvas>
+            </div>
+            <div id = "graph-buttons-container">
+                <button id = "graph-button1" class="graph-button active-graph-button"> 1 Day</button>
+                <button id = "graph-button7" class="graph-button"> 1 Week</button>
+                <button id = "graph-button30" class="graph-button"> 1 Month</button>
+                <button id = "graph-button365" class="graph-button"> 1 Year</button>
+            </div>
+        </div>
+        <div id = "proof-container" class = "main-content-div hidden">
+            <h1>Snarkjs client example</h1>
+            <button id="generate-proof-button"> Create proof </button>
+          
+            <pre class="proof"> Proof: <code id="proof"></code></pre>
+            <pre class="proof"> Result: <code id="result"></code></pre>
+        </div>
+        <div id = "settings-container" class = "main-content-div hidden">
+            <button id="copy-private-key">Copy private key</button>
+            <label class="info-label">Don`t give private key to anyone! Anyone with private key get access to all account funds!</label>
+                
+            <button id="logout-button">Log out</button>
+            
+        </div>
+    </div>
+    <div id = "footer">
+        <button class="footer-button active" id = "footer-home-button">
+            <img class="footer-button-img" src = "../assets/home.png">
+        </button>
+        <button class="footer-button" id = "footer-history-button">
+            <img class="footer-button-img" src = "../assets/history.png">
+        </button>
+        <button class="footer-button" id = "footer-voting-button">
+            <img class="footer-button-img" src = "../assets/voting.png">
+        </button>
+        <button class="footer-button" id = "footer-settings-button">
+            <img class="footer-button-img" src = "../assets/settings.png">
+        </button>
+    </div>
+    <script src="error.js" defer></script>
+    <script src="fetchRecentBalances.js" defer></script>
+    <script src="smartContractDeploy.js" defer></script>
+    <script src="sendTransaction.js" defer></script>
+    <script src="swapSepoliaEthForTokens.js" deref></script>
+    <script src="cypher.js" deref></script>
+    <script src="home.js" deref></script>
+  </body>
+</html>
