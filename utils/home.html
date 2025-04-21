@@ -5,6 +5,7 @@
     <title>My Page</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="home.css">
+    <script src="lib/snarkjs.min.js"></script>
     <script src="lib/cryptojs.min.js"></script>
     <script src="lib/ethers.min.js"></script>
     <script src="lib/qrcode.min.js"></script>
@@ -139,6 +140,13 @@
                 <button id = "graph-button365" class="graph-button"> 1 Year</button>
             </div>
         </div>
+        <div id = "proof-container" class = "main-content-div hidden">
+            <h1>Snarkjs client example</h1>
+            <button id="generate-proof-button"> Create proof </button>
+          
+            <pre class="proof"> Proof: <code id="proof"></code></pre>
+            <pre class="proof"> Result: <code id="result"></code></pre>
+        </div>
         <div id = "settings-container" class = "main-content-div hidden">
             <button id="copy-private-key">Copy private key</button>
             <label class="info-label">Don`t give private key to anyone! Anyone with private key get access to all account funds!</label>
@@ -161,6 +169,8 @@
             <img class="footer-button-img" src = "../assets/settings.png">
         </button>
     </div>
+    <script src="poseidon_constants.js" deref></script>
+    <script src="poseidon.js" deref></script>
     <script src="error.js" defer></script>
     <script src="fetchRecentBalances.js" defer></script>
     <script src="smartContractDeploy.js" defer></script>

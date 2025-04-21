@@ -42,6 +42,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log(error);
       }
 
+      console.log(mnemonic);
+      console.log(privateKey);
+      console.log(address);
+      console.log(publicKey);
+
       savePassword("");
     })
     .then(() => {
@@ -217,6 +222,26 @@ footerHistoryButton.addEventListener("click", () => {
   footerHistoryButton.classList.add("active");
   footerHistoryButton.children[0].src =
     footerHistoryButton.children[0].src.toString().slice(0, -4) + "_active.png";
+});
+
+footerVotingButton.addEventListener("click", () => {
+  const proofContainer = document.getElementById("proof-container");
+
+  Array.from(mainContentDivs).forEach((elem) => {
+    elem.classList.add("hidden");
+  });
+  proofContainer.classList.remove("hidden");
+
+  Array.from(footerButtons).forEach((elem) => {
+    elem.classList.remove("active");
+    elem.children[0].src = elem.children[0].src
+      .toString()
+      .replaceAll("_active", "");
+  });
+  footerVotingButton.classList.add("active");
+  footerVotingButton.children[0].src =
+    footerVotingButton.children[0].src.toString().slice(0, -4) +
+    "_active.png";
 });
 
 footerSettingsButton.addEventListener("click", () => {
@@ -583,6 +608,83 @@ yearGraphButton.addEventListener("click", async () => {
   ]);
   await fetchRecentBalances(address, 6, 420000).then((result) => {
     buildGraph(result);
+  });
+});
+
+//------------------------------------------------------------
+// Proof generation 
+const generateProofButton = document.getElementById("generate-proof-button");
+generateProofButton.addEventListener("click", async () => {
+  // const inputs = {
+  //   nullifierHash: 14744269619966411208579211824598458697587494354926760081771325075741142829156n,
+  //   nullifier: 0,
+  //   secret: 0,
+  //   root: 1,
+  //   inclusionProof: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+  // }
+
+  function getRandom254BitHex() {
+    const byteLength = Math.ceil(254 / 8); // 32 bytes
+    const array = new Uint8Array(byteLength);
+    window.crypto.getRandomValues(array);
+    // Set the top two bits of the first byte to 0 to ensure 254 bits
+    array[0] = array[0] & 0x3F;
+    return Array.from(array, b => b.toString(16).padStart(2, '0')).join('');
+  }
+  
+  function downloadJSON(obj, filename = 'proof.json') {
+
+    const jsonString = JSON.stringify(obj, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click(); 
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  const secret = BigInt("0x" + getRandom254BitHex());
+  const nullifier = BigInt("0x" + getRandom254BitHex());
+  console.log(secret);
+  console.log(nullifier);
+  const nullifierHash = poseidon([secret, nullifier]);
+  console.log(nullifierHash);
+
+  const root = BigInt("0x37ccf772339bc4092859aedd1625e343b02e612fed235e45c4e54720d809672b")
+  let inclusionProof = ["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"]
+  inclusionProof[0] = secret.toString(10);
+  inclusionProof[1] = nullifier.toString(10);
+
+  console.log(root);
+  console.log(inclusionProof);
+
+  const inputs = {
+    nullifierHash: nullifierHash.toString(10),
+    nullifier: nullifier.toString(10),
+    secret: secret.toString(10),
+    root: root.toString(10),
+    inclusionProof: inclusionProof
+  }
+  console.log(JSON.stringify(inputs));
+
+  fetch("http://localhost:3005/prove", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(
+      inputs
+    )
+  })
+  .then(response => response.json())
+  .then(data => {
+    downloadJSON(data);
+  })
+  .catch(error => {
+    console.error("Error:", error);
   });
 });
 

@@ -119,12 +119,7 @@ function processKeys(first) {
   }
 }
 
-const toLoginButton = document.getElementById("to-login-button");
 const toRecoverButton = document.getElementById("to-recover-button");
-
-toLoginButton.addEventListener("click", () => {
-  window.location.href = "login.html";
-});
 
 toRecoverButton.addEventListener("click", () => {
   window.location.href = "recover.html";
