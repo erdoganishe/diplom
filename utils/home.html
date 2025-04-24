@@ -141,11 +141,11 @@
             </div>
         </div>
         <div id = "proof-container" class = "main-content-div hidden">
-            <h1>Snarkjs client example</h1>
-            <button id="generate-proof-button"> Create proof </button>
-          
-            <pre class="proof"> Proof: <code id="proof"></code></pre>
-            <pre class="proof"> Result: <code id="result"></code></pre>
+            <div class="to-center-container">
+                <button id="generate-proof-button" class="action-button"> Create proof </button>
+                <input id = "calldata-input" type = "text" placeholder="calldata..."></input>
+                <button id="call-contract-button" class="action-button"> Call contract </button>
+            </div>
         </div>
         <div id = "settings-container" class = "main-content-div hidden">
             <button id="copy-private-key">Copy private key</button>

@@ -3,34 +3,16 @@ let params = {};
 let isFirst = true;
 let indexes = [];
 
-const passwordInputs = document.getElementsByClassName("password-input");
+// const passwordInputs = document.getElementsByClassName("password-input");
 const phraseInputs = document.getElementsByClassName("phrase-container");
 console.log(phraseInputs.length);
 const firstButtonNext = document.getElementById("nav-button-next1");
 firstButtonNext.addEventListener("click", async () => {
-  if (
-    passwordInputs[0].value &&
-    passwordInputs[1].value &&
-    passwordInputs[0].value == passwordInputs[1].value
-  ) {
+  {
     document.getElementById("app-password").classList.add("hidden");
     document.getElementById("app-phrase").classList.remove("hidden");
-    password = passwordInputs[0].value;
-    
+
     processKeys(isFirst);
-  } else {
-    if (!passwordInputs[0].value) {
-      showError("Provide password!");
-      return;
-    }
-    if (!passwordInputs[1].value) {
-      showError("Provide password confirmation!");
-      return;
-    }
-    if (passwordInputs[0].value != passwordInputs[1].value) {
-      showError("Passwords don`t match!");
-      return;
-    }
   }
 });
 
@@ -128,6 +110,6 @@ toRecoverButton.addEventListener("click", () => {
 // //------------------------------------------------------------
 // // Extension button
 // document.getElementById("openTabButton").addEventListener("click", async () => {
-//   const extensionURL = browser.runtime.getURL("utils/register.html"); 
+//   const extensionURL = browser.runtime.getURL("utils/register.html");
 //   await browser.tabs.create({ url: extensionURL });
 // });

@@ -74,7 +74,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   await fetchRecentBalances(address, 6, 1160).then((result) => {
     buildGraph(result);
   });
-
 });
 
 //------------------------------------------------------------
@@ -240,8 +239,7 @@ footerVotingButton.addEventListener("click", () => {
   });
   footerVotingButton.classList.add("active");
   footerVotingButton.children[0].src =
-    footerVotingButton.children[0].src.toString().slice(0, -4) +
-    "_active.png";
+    footerVotingButton.children[0].src.toString().slice(0, -4) + "_active.png";
 });
 
 footerSettingsButton.addEventListener("click", () => {
@@ -371,11 +369,10 @@ async function updateLocalHistory() {
 
   console.log(localHistory.length);
 
-  if (localHistory.length == 0){
+  if (localHistory.length == 0) {
     console.log(1);
     localHistoryContainer.innerHTML = "No operation yet!";
   }
-
 
   console.log(localHistory);
   localHistory.forEach((elem) => {
@@ -398,15 +395,11 @@ async function updateLocalHistory() {
         recepientDiv.addEventListener("click", () => {
           navigator.clipboard.writeText(elem.txHash);
         });
-        
+
         paramsDiv.appendChild(recepientDiv);
 
         const amountDiv = document.createElement("div");
-        amountDiv.classList.add(
-          "fixed-width",
-          "div-to-right"
-        );
-        
+        amountDiv.classList.add("fixed-width", "div-to-right");
 
         historyElem.appendChild(img);
         historyElem.appendChild(paramsDiv);
@@ -469,7 +462,7 @@ async function updateLocalHistory() {
         const recepientDiv = document.createElement("div");
         recepientDiv.classList.add("local-history-elem-tx-recepint");
         recepientDiv.innerHTML =
-          "Status: "+ elem.status? "Success!" : "Revert!";
+          "Status: " + elem.status ? "Success!" : "Revert!";
         const txHashDiv = document.createElement("div");
         txHashDiv.classList.add("local-history-elem-tx-hash");
         txHashDiv.innerHTML =
@@ -481,10 +474,7 @@ async function updateLocalHistory() {
         paramsDiv.appendChild(txHashDiv);
 
         const amountDiv = document.createElement("div");
-        amountDiv.classList.add(
-          "fixed-width",
-          "div-to-right"
-        );
+        amountDiv.classList.add("fixed-width", "div-to-right");
 
         historyElem.appendChild(img);
         historyElem.appendChild(paramsDiv);
@@ -501,8 +491,6 @@ async function updateLocalHistory() {
 
     localHistoryContainer.appendChild(historyElem);
   });
-
-  
 
   await putValueToLocalStorage(
     "localHistory",
@@ -612,49 +600,219 @@ yearGraphButton.addEventListener("click", async () => {
 });
 
 //------------------------------------------------------------
-// Proof generation 
+// Proof generation
 const generateProofButton = document.getElementById("generate-proof-button");
+const callContractButton = document.getElementById("call-contract-button");
 generateProofButton.addEventListener("click", async () => {
-  // const inputs = {
-  //   nullifierHash: 14744269619966411208579211824598458697587494354926760081771325075741142829156n,
-  //   nullifier: 0,
-  //   secret: 0,
-  //   root: 1,
-  //   inclusionProof: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-  // }
-
+  generateProofButton.disabled = true;
   function getRandom254BitHex() {
     const byteLength = Math.ceil(254 / 8); // 32 bytes
     const array = new Uint8Array(byteLength);
     window.crypto.getRandomValues(array);
     // Set the top two bits of the first byte to 0 to ensure 254 bits
-    array[0] = array[0] & 0x3F;
-    return Array.from(array, b => b.toString(16).padStart(2, '0')).join('');
+    array[0] = array[0] & 0x3f;
+    return Array.from(array, (b) => b.toString(16).padStart(2, "0")).join("");
   }
-  
-  function downloadJSON(obj, filename = 'proof.json') {
 
+  function downloadJSON(obj, filename = "calldata.json") {
     const jsonString = JSON.stringify(obj, null, 2);
-    const blob = new Blob([jsonString], { type: 'application/json' });
+    const blob = new Blob([jsonString], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = filename;
     document.body.appendChild(a);
-    a.click(); 
+    a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   }
 
+  //--------------------------------------
+  // Fund contact to get it back later
+  const calldata = '["0x226952847ae340d55fd5c10dd4a4dd15245e14a9c13f1cec41f3d33d680d1f13", "0x1f408457d1782e69cddf684ea5804de2e4650cd8adb12a5f21672c391c7e7765"],[["0x195ca54fda280d612697bca4ece9ccad903dd49920d9d9facad8a825920f6921", "0x264b6a42c5df1271a5258266dcef6c175c2510a81e6b349413aefd43ac818efc"],["0x2a112ff066960ac64ff0f36b23c5ab091deaa02e692a6b8b694be3b467ee1a8e", "0x1b0f3105f6553d108e80962fdb59aae75d829094d7957e2765fd961f15af6966"]],["0x245be77a089c362010e435749495b441dbb152b8cc64710090e8f3c5757b4183", "0x1bf05eebd84b8ed833cd8adcd5f906341ee26625679697cca54aaaa33ce6cf30"],["0x02fa1595684d9c4d2492b046a74237088bfdf9d2e74c7c363ba1ba13aba57336","0x0768a8ff526a23df7009692694a48ae687fa78e77369edb48103518ce809672a"]'
+  const contractAddress = "0x59Bc776565ebC5d438A0BC16cD0B4443A79976f6";
+  
   const secret = BigInt("0x" + getRandom254BitHex());
   const nullifier = BigInt("0x" + getRandom254BitHex());
+
+  const abi = [
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: false,
+          internalType: "uint256",
+          name: "leaf",
+          type: "uint256",
+        },
+        {
+          indexed: false,
+          internalType: "address",
+          name: "sender",
+          type: "address",
+        },
+        {
+          indexed: false,
+          internalType: "uint256",
+          name: "value",
+          type: "uint256",
+        },
+      ],
+      name: "Deposit",
+      type: "event",
+    },
+    {
+      inputs: [],
+      name: "REWARD_AMOUNT",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "uint256",
+          name: "leaf",
+          type: "uint256",
+        },
+      ],
+      name: "deposit",
+      outputs: [],
+      stateMutability: "payable",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "uint256[2]",
+          name: "_pA",
+          type: "uint256[2]",
+        },
+        {
+          internalType: "uint256[2][2]",
+          name: "_pB",
+          type: "uint256[2][2]",
+        },
+        {
+          internalType: "uint256[2]",
+          name: "_pC",
+          type: "uint256[2]",
+        },
+        {
+          internalType: "uint256[2]",
+          name: "_pubSignals",
+          type: "uint256[2]",
+        },
+      ],
+      name: "verifyAndReward",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "uint256[2]",
+          name: "_pA",
+          type: "uint256[2]",
+        },
+        {
+          internalType: "uint256[2][2]",
+          name: "_pB",
+          type: "uint256[2][2]",
+        },
+        {
+          internalType: "uint256[2]",
+          name: "_pC",
+          type: "uint256[2]",
+        },
+        {
+          internalType: "uint256[2]",
+          name: "_pubSignals",
+          type: "uint256[2]",
+        },
+      ],
+      name: "verifyProof",
+      outputs: [
+        {
+          internalType: "bool",
+          name: "",
+          type: "bool",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      stateMutability: "payable",
+      type: "receive",
+    },
+  ];
+  const contract = new ethers.Contract(contractAddress, abi, signer);
+
+  const REWARD_AMOUNT = ethers.utils.parseEther("0.01"); // 10^16 wei = 0.01 ETH
+  const feeData = await provider.getFeeData();
+  
+  const gasEstimate = await contract.estimateGas.deposit(secret, { 
+    value: REWARD_AMOUNT 
+  });
+  const gasLimit = gasEstimate.mul(120).div(100); 
+
+  try {
+    const tx = await contract.deposit(secret, {
+      value: REWARD_AMOUNT,
+      gasLimit,
+      maxFeePerGas: feeData.maxFeePerGas,
+      maxPriorityFeePerGas: feeData.maxPriorityFeePerGas
+    });
+    console.log(tx);
+
+    const receipt = await tx.wait();
+    showError("Transaction mined: " + receipt.transactionHash)
+  } catch(e) {
+    console.log(e);
+  }
+
+
+  //--------------------------------------
+  // Generate ZK proof for this fundation
+
   console.log(secret);
   console.log(nullifier);
   const nullifierHash = poseidon([secret, nullifier]);
   console.log(nullifierHash);
 
-  const root = BigInt("0x37ccf772339bc4092859aedd1625e343b02e612fed235e45c4e54720d809672b")
-  let inclusionProof = ["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"]
+  const root = BigInt(
+    "0x37ccf772339bc4092859aedd1625e343b02e612fed235e45c4e54720d809672b"
+  );
+  let inclusionProof = [
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+  ];
   inclusionProof[0] = secret.toString(10);
   inclusionProof[1] = nullifier.toString(10);
 
@@ -666,26 +824,188 @@ generateProofButton.addEventListener("click", async () => {
     nullifier: nullifier.toString(10),
     secret: secret.toString(10),
     root: root.toString(10),
-    inclusionProof: inclusionProof
-  }
+    inclusionProof: inclusionProof,
+  };
   console.log(JSON.stringify(inputs));
 
   fetch("http://localhost:3005/prove", {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(
-      inputs
-    )
+    body: JSON.stringify(inputs),
   })
-  .then(response => response.json())
-  .then(data => {
-    downloadJSON(data);
-  })
-  .catch(error => {
-    console.error("Error:", error);
-  });
+    .then((response) => response.json())
+    .then((data) => {
+      downloadJSON(data);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+  generateProofButton.disabled = false;
+
+});
+
+callContractButton.addEventListener("click", async () => {
+  callContractButton.disabled = true;
+  const calldataInput = document.getElementById("calldata-input");
+  const calldata = calldataInput.value;
+  // const calldata = '["0x226952847ae340d55fd5c10dd4a4dd15245e14a9c13f1cec41f3d33d680d1f13", "0x1f408457d1782e69cddf684ea5804de2e4650cd8adb12a5f21672c391c7e7765"],[["0x195ca54fda280d612697bca4ece9ccad903dd49920d9d9facad8a825920f6921", "0x264b6a42c5df1271a5258266dcef6c175c2510a81e6b349413aefd43ac818efc"],["0x2a112ff066960ac64ff0f36b23c5ab091deaa02e692a6b8b694be3b467ee1a8e", "0x1b0f3105f6553d108e80962fdb59aae75d829094d7957e2765fd961f15af6966"]],["0x245be77a089c362010e435749495b441dbb152b8cc64710090e8f3c5757b4183", "0x1bf05eebd84b8ed833cd8adcd5f906341ee26625679697cca54aaaa33ce6cf30"],["0x02fa1595684d9c4d2492b046a74237088bfdf9d2e74c7c363ba1ba13aba57336","0x0768a8ff526a23df7009692694a48ae687fa78e77369edb48103518ce809672a"]'
+  const contractAddress = "0x59Bc776565ebC5d438A0BC16cD0B4443A79976f6";
+
+  const abi = [
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: false,
+          internalType: "uint256",
+          name: "leaf",
+          type: "uint256",
+        },
+        {
+          indexed: false,
+          internalType: "address",
+          name: "sender",
+          type: "address",
+        },
+        {
+          indexed: false,
+          internalType: "uint256",
+          name: "value",
+          type: "uint256",
+        },
+      ],
+      name: "Deposit",
+      type: "event",
+    },
+    {
+      inputs: [],
+      name: "REWARD_AMOUNT",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "uint256",
+          name: "leaf",
+          type: "uint256",
+        },
+      ],
+      name: "deposit",
+      outputs: [],
+      stateMutability: "payable",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "uint256[2]",
+          name: "_pA",
+          type: "uint256[2]",
+        },
+        {
+          internalType: "uint256[2][2]",
+          name: "_pB",
+          type: "uint256[2][2]",
+        },
+        {
+          internalType: "uint256[2]",
+          name: "_pC",
+          type: "uint256[2]",
+        },
+        {
+          internalType: "uint256[2]",
+          name: "_pubSignals",
+          type: "uint256[2]",
+        },
+      ],
+      name: "verifyAndReward",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "uint256[2]",
+          name: "_pA",
+          type: "uint256[2]",
+        },
+        {
+          internalType: "uint256[2][2]",
+          name: "_pB",
+          type: "uint256[2][2]",
+        },
+        {
+          internalType: "uint256[2]",
+          name: "_pC",
+          type: "uint256[2]",
+        },
+        {
+          internalType: "uint256[2]",
+          name: "_pubSignals",
+          type: "uint256[2]",
+        },
+      ],
+      name: "verifyProof",
+      outputs: [
+        {
+          internalType: "bool",
+          name: "",
+          type: "bool",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      stateMutability: "payable",
+      type: "receive",
+    },
+  ];
+  const contract = new ethers.Contract(contractAddress, abi, signer);
+
+  const params = JSON.parse(`{"a":[${calldata}]}`).a
+  const _pA = params[0];
+  const _pB = params[1];
+  const _pC = params[2];
+  const _pubSignals = params[3];
+
+  const gasLimit = await contract.estimateGas.verifyAndReward(_pA, _pB, _pC, _pubSignals);
+  console.log(gasLimit);
+  const feeData = await provider.getFeeData();
+  console.log(feeData);
+  console.log(_pA, _pB, _pC, _pubSignals);
+
+
+  const tx = await contract.verifyAndReward(
+    _pA,
+    _pB,
+    _pC,
+    _pubSignals,
+    {
+      gasLimit: gasLimit.mul(120).div(100), 
+      maxFeePerGas: feeData.maxFeePerGas,
+      maxPriorityFeePerGas: feeData.maxPriorityFeePerGas
+    }
+  );
+
+  console.log(tx);
+  
+  // Wait for confirmation
+  const receipt = await tx.wait();
+  showError("Transaction mined:" + receipt.transactionHash);
+
+  callContractButton.disabled = false;
 });
 
 //------------------------------------------------------------

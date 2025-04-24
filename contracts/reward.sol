@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {Groth16Verifier} from "./verifier.sol";  // Adjust path to your verifier contract
+import {Groth16Verifier} from "./verifier.sol";  
+import {SparseMerkleTree} from "./tree.sol";
 
 contract RewardValidProof is Groth16Verifier {
     uint256 public constant REWARD_AMOUNT = 0.01 ether;

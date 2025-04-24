@@ -4,7 +4,6 @@ const conformNewPasswordButton = document.getElementById(
 );
 
 const mnemonicInputs = document.getElementsByClassName("phrase-container");
-const passwordInputs = document.getElementsByClassName("password-input");
 
 Array.from(mnemonicInputs).forEach((elem) => {
   elem.addEventListener("change", () => {
@@ -26,41 +25,22 @@ conformNewPasswordButton.addEventListener("click", async () => {
   mnemonic = mnemonic.slice(0, -1);
   console.log(mnemonic);
   let password = "";
-  if (
-    passwordInputs[0].value &&
-    passwordInputs[1].value &&
-    passwordInputs[0].value == passwordInputs[1].value
-  ) {
-    password = passwordInputs[0].value;
-    try {
-      let params = generateAllfromMnemonic(mnemonic);
-      const passwordHash = CryptoJS.SHA256(password).toString();
 
-      // await putValueToLocalStorage("passwordHash", passwordHash, password);
-      // await putValueToLocalStorage("mnemonic", params.mnemonic, password);
-      // await putValueToLocalStorage("privateKey", params.privateKey, password);
-      // await putValueToLocalStorage("publicKey", params.publicKey, password);
-      // await putValueToLocalStorage("address", params.address, password);
-      // await savePassword(password);
+  try {
+    let params = generateAllfromMnemonic(mnemonic);
+    const passwordHash = CryptoJS.SHA256(password).toString();
 
-      window.location.href = "home.html";
-    } catch (e) {
-      console.error(e);
-      showError("Invalid mnemonic");
-    }
-  } else {
-    if (!passwordInputs[0].value) {
-      showError("Provide password!");
-      return;
-    }
-    if (!passwordInputs[1].value) {
-      showError("Provide password confirmation!");
-      return;
-    }
-    if (passwordInputs[0].value != passwordInputs[1].value) {
-      showError("Passwords don`t match!");
-      return;
-    }
+    // await putValueToLocalStorage("passwordHash", passwordHash, password);
+    // await putValueToLocalStorage("mnemonic", params.mnemonic, password);
+    // await putValueToLocalStorage("privateKey", params.privateKey, password);
+    // await putValueToLocalStorage("publicKey", params.publicKey, password);
+    // await putValueToLocalStorage("address", params.address, password);
+    // await savePassword(password);
+
+    window.location.href = "home.html";
+  } catch (e) {
+    console.error(e);
+    showError("Invalid mnemonic");
   }
 });
 
@@ -70,7 +50,7 @@ toRegisterButton.addEventListener("click", () => {
 
 //------------------------------------------------------------
 // Extension button
-document.getElementById("openTabButton").addEventListener("click", async () => {
-  const extensionURL = browser.runtime.getURL("./utils/recover.html");
-  await browser.tabs.create({ url: extensionURL });
-});
+// document.getElementById("openTabButton").addEventListener("click", async () => {
+//   const extensionURL = browser.runtime.getURL("./utils/recover.html");
+//   await browser.tabs.create({ url: extensionURL });
+// });

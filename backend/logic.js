@@ -23,15 +23,9 @@ const input = {
     "artifacts/circuit_final.zkey"
   );
   // console.log(res);
-
-  return res;
+  const calldata = await snarkjs.groth16.exportSolidityCallData(res.proof, res.publicSignals);
+  console.log(calldata);
+  return calldata;
 }
 
-async function callContract(calldata){
-  const contractAddress = "0x...";
-  const abi = [ /* Your contract ABI */ ];
-  const contract = new ethers.Contract(contractAddress, abi, provider);
-
-  
-}
 module.exports = prove;

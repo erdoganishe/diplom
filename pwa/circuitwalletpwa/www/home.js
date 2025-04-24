@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   } catch (e){
     showError(e.toString());
   }
-  showError(address);
+  
   copyAddressButton.innerHTML = address.slice(0, 6) + "..." + address.slice(-4);
 
   // TODO: fix local history
